@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voto Electrónico Escolar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      text-align: center;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Voto Electrónico Escolar</h1>
+    <p>Ingresa tu DNI para votar</p>
+  </header>
+
+  <div class="container">
+    <label for="dni">DNI:</label>
+    <input type="text" id="dni" placeholder="Ingresa tu DNI">
+    <br><br>
+
+    <h3>Vota por:</h3>
+    <button onclick="vote('María Pérez')">María Pérez</button>
+    <button onclick="vote('Juan López')">Juan López</button>
+    <button onclick="vote('Voto en Blanco')">Voto en Blanco</button>
+
+    <h3 id="resultMessage"></h3>
+  </div>
+
+  <script>
+    // Lista de DNIs autorizados para votar (esto puede actualizarse según los estudiantes que participen)
+    const authorizedDNIs = ["12345678", "87654321", "11223344"]; // Ejemplo de DNIs
+
+    // Inicializar votos si no existen
+    if (!localStorage.getItem('votes')) {
+      const initialVotes = { "María Pérez": 0, "Juan López": 0, "Voto en Blanco": 0 };
+      localStorage.setItem('votes', JSON.stringify(initialVotes));
+    }
+
+    // Función para votar
+    function vote(candidate) {
+      const dniInput = document.getElementById("dni");
+      const dni = dniInput.value.trim();
+
+      if (dni === "") {
+        alert("Por favor, ingresa tu DNI.");
+        return;
+      }
+
+      // Verificar si el DNI está autorizado para votar
+      if (!authorizedDNIs.includes(dni)) {
+        alert("Este DNI no está autorizado para votar.");
+        return;
+      }
+
+      // Verificar si ya ha votado
+      if (localStorage.getItem(dni)) {
+        alert("Este DNI ya ha votado.");
+        return;
+      }
+
+      // Guardar el voto
+      const votes = JSON.parse(localStorage.getItem('votes'));
+      votes[candidate]++;
+      localStorage.setItem('votes', JSON.stringify(votes));
+
+      // Marcar que este DNI ya votó
+      localStorage.setItem(dni, 'votado');
+
+      document.getElementById('resultMessage').textContent = `¡Gracias por votar! Has votado por ${candidate}.`;
+
+      // Limpiar el campo de DNI
+      dniInput.value = "";
+    }
+  </script>
+</body>
+</html>
